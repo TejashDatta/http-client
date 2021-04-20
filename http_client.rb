@@ -25,7 +25,7 @@ class HttpClient
     response_codes = Hash.new(0)
     response_codes_semaphore = Mutex.new
 
-    send_requests_in_parallel_loops do |response|
+    send_requests_in_concurrent_loops do |response|
       response_codes_semaphore.synchronize { response_codes[response.code] += 1 }
     end
 
@@ -33,12 +33,12 @@ class HttpClient
   end
 
   def display_response_bodies
-    send_requests_in_parallel_loops { |response| puts response.body }
+    send_requests_in_concurrent_loops { |response| puts response.body }
   end
 
   private
 
-  def send_requests_in_parallel_loops
+  def send_requests_in_concurrent_loops
     threads = []
     @number_of_threads.times do
       threads << Thread.new do
