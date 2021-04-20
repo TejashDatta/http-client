@@ -1,0 +1,2 @@
+class UnsupportedOutputTypeError < StandardError
+end
