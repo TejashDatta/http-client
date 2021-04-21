@@ -1,56 +1,44 @@
 require_relative 'http_request'
-require_relative 'errors/unsupported_output_type_error'
 
 class HttpClient
-  def initialize(url, method, parameters, number_of_threads, number_of_loops)
+  def initialize(url, method, parameters, no_of_threads, no_of_loops)
     @url = url
     @method = method
     @parameters = parameters
-    @number_of_threads = number_of_threads.to_i
-    @number_of_loops = number_of_loops.to_i
+    @no_of_threads = no_of_threads.to_i
+    @no_of_loops = no_of_loops.to_i
+    @response_codes = Hash.new(0)
+    @response_bodies = []
   end
 
-  def run(output_type)
-    case output_type
-    when 'response-codes-aggregation'
-      display_response_codes_aggregation
-    when 'response-bodies'
-      display_response_bodies
-    else
-      raise UnsupportedOutputTypeError
+  def send_requests
+    @no_of_loops.times do
+      threads = []
+      @no_of_threads.times do
+        threads << Thread.new { send_request_and_record_response }
+        threads.each(&:join)
+      end
     end
   end
 
-  def display_response_codes_aggregation
-    response_codes = Hash.new(0)
-    response_codes_semaphore = Mutex.new
-
-    send_requests_in_concurrent_loops do |response|
-      response_codes_semaphore.synchronize { response_codes[response.code] += 1 }
-    end
-
-    response_codes.each { |code, count| puts "#{code}: #{count}" }
-  end
-
-  def display_response_bodies
-    send_requests_in_concurrent_loops { |response| puts response.body }
+  def show_responses
+    puts 'Response codes: '
+    @response_codes.each { |code, count| print "#{code}: #{count} \t" }
+    puts "\nResponse bodies: "
+    @response_bodies.each { |body| puts body }
   end
 
   private
 
-  def send_requests_in_concurrent_loops
-    threads = []
-    @number_of_threads.times do
-      threads << Thread.new do
-        @number_of_loops.times do
-          yield HttpRequest.new(@url, @method, @parameters).send_request
-        end
-      end
-    end
-    threads.each(&:join)
+  def send_request_and_record_response
+    response = HttpRequest.new(@url, @method, @parameters).send
+    @response_codes[response.code] += 1
+    @response_bodies << response.body
   end
 end
 
 if __FILE__ == $0
-  HttpClient.new(*ARGV[0..4]).run(ARGV[5])
+  http_client = HttpClient.new(*ARGV)
+  http_client.send_requests
+  http_client.show_responses
 end

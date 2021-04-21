@@ -1,1 +1,0 @@
-bundle binstubs rspec-core

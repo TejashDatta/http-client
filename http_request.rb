@@ -1,5 +1,4 @@
 require 'net/http'
-require_relative 'errors/unsupported_http_method_error'
 
 class HttpRequest
   def initialize(url, method, parameters_string)
@@ -8,14 +7,14 @@ class HttpRequest
     @parameters = parse_parameters_to_hash(parameters_string)
   end
 
-  def send_request
+  def send
     case @method
     when 'get' then get
     when 'post' then post
-    else raise UnsupportedHttpMethodError
+    else raise UnsupportedHttpMethod
     end
   end
-
+  
   private
 
   def get
@@ -26,10 +25,16 @@ class HttpRequest
   def post
     Net::HTTP.post_form(@uri, @parameters)
   end
-
+  
   def parse_parameters_to_hash(parameters_string)
-    parameters_string.split(',')
-                     .map { |key_value_pair| key_value_pair.split('=').map(&:strip) }
-                     .to_h
+    parameters = {}
+    parameters_string.split(',').each do |key_value_pair|
+      key, value = key_value_pair.split('=').map(&:strip)
+      parameters[key] = value
+    end
+    parameters
   end
+end
+
+class UnsupportedHttpMethod < StandardError
 end
