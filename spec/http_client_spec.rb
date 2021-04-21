@@ -1,6 +1,8 @@
 require_relative '../http_client'
 require_relative 'constants'
 
+HTML_RESPONSE_BODY = "<html><body><h1>It works!</h1></body></html>\n".freeze
+
 describe 'HttpClient' do
   describe '#run' do
     context 'when single thread is running single loop' do
@@ -8,9 +10,7 @@ describe 'HttpClient' do
       
       context 'when output_type is response-bodies' do
         it 'displays response body' do
-          expect { http_client.run('response-bodies') }.to output(
-            "<html><body><h1>It works!</h1></body></html>\n"
-          ).to_stdout
+          expect { http_client.run('response-bodies') }.to output(HTML_RESPONSE_BODY).to_stdout
         end
       end
 
@@ -37,7 +37,7 @@ describe 'HttpClient' do
       context 'when output_type is response-bodies' do
         it 'displays response bodies' do
           expect { http_client.run('response-bodies') }.to output(
-            "<html><body><h1>It works!</h1></body></html>\n" * output_count
+            HTML_RESPONSE_BODY * output_count
           ).to_stdout
         end
       end
