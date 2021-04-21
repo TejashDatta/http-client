@@ -15,7 +15,7 @@ describe 'HttpClient' do
       end
 
       context 'when output_type is response-codes-aggregation' do
-        it 'displays response code' do
+        it 'displays response code 200' do
           expect { http_client.run('response-codes-aggregation') }.to output("200: 1\n").to_stdout
         end
       end
@@ -43,7 +43,7 @@ describe 'HttpClient' do
       end
 
       context 'when output_type is response-codes-aggregation' do
-        it 'displays response codes aggregation' do
+        it 'displays response code 200 aggregation' do
           expect { http_client.run('response-codes-aggregation') }.to output("200: #{output_count}\n").to_stdout
         end
       end
