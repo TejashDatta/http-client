@@ -2,8 +2,6 @@ require_relative '../http_client'
 require_relative 'constants'
 
 HTML_RESPONSE_BODY = "<html><body><h1>It works!</h1></body></html>\n".freeze
-NUMBER_OF_THREADS = 10
-NUMBER_OF_LOOPS = 100
 
 describe 'HttpClient' do
   describe '#run' do
@@ -30,6 +28,8 @@ describe 'HttpClient' do
     end
 
     context 'when multiple threads are running multiple loops' do
+      NUMBER_OF_THREADS = 10
+      NUMBER_OF_LOOPS = 100
       output_count = NUMBER_OF_THREADS * NUMBER_OF_LOOPS
 
       let(:http_client) { HttpClient.new(URL, 'get', QUERY_STRING, NUMBER_OF_THREADS, NUMBER_OF_LOOPS) }
