@@ -2,24 +2,27 @@ require_relative 'http_request'
 require_relative 'errors/unsupported_output_type_error'
 
 class HttpClient
-  def initialize(url, method, parameters, number_of_threads, number_of_loops)
+  def initialize(url, method, parameters, number_of_threads, number_of_loops, output_type)
     @url = url
     @method = method
     @parameters = parameters
     @number_of_threads = number_of_threads.to_i
     @number_of_loops = number_of_loops.to_i
-    @response_codes = Hash.new(0)
-    @response_bodies = []
+    @output_type = output_type
+    @responses = []
   end
 
-  def run(output_type)
+  def run
     send_requests_concurrently_in_loops
+    display
+  end
 
-    case output_type
+  def display
+    case @output_type
     when 'response-codes-aggregation'
-      display_response_codes_aggregation
+      aggregate_response_codes.each { |response_code, count| puts "#{response_code}: #{count}" }
     when 'response-bodies'
-      display_response_bodies
+      @responses.each { |response| puts response.body }
     else
       raise UnsupportedOutputTypeError
     end
@@ -27,35 +30,25 @@ class HttpClient
 
   private
 
-  def display_response_codes_aggregation
-    @response_codes.each { |response_code, count| puts "#{response_code}: #{count}" }
-  end
-
-  def display_response_bodies
-    @response_bodies.each { |response_body| puts response_body }
-  end
-
   def send_requests_concurrently_in_loops
-    save_response_semaphore = Mutex.new
-
     @number_of_loops.times do
       threads = []
       @number_of_threads.times do
         threads << Thread.new do
-          response = HttpRequest.new(@url, @method, @parameters).send_request
-          save_response_semaphore.synchronize { save_response_code_and_body(response) }
+          @responses << HttpRequest.new(@url, @method, @parameters).send_request
         end
       end
       threads.each(&:join)
     end
   end
 
-  def save_response_code_and_body(response)
-    @response_bodies << response.body
-    @response_codes[response.code] += 1
+  def aggregate_response_codes
+    @responses.each_with_object(Hash.new(0)) do |response, response_codes|
+      response_codes[response.code] += 1
+    end
   end
 end
 
 if __FILE__ == $0
-  HttpClient.new(*ARGV[0..4]).run(ARGV[5])
+  HttpClient.new(*ARGV[0..5]).run
 end

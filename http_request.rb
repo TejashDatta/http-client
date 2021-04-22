@@ -18,6 +18,13 @@ class HttpRequest
 
   private
 
+  def parse_parameters_to_hash(parameters_string)
+    parameters_string
+      .split(',')
+      .map { |key_value_pair| key_value_pair.split('=').map(&:strip) }
+      .to_h
+  end
+  
   def get
     @uri.query = URI.encode_www_form(@parameters)
     Net::HTTP.get_response(@uri)
@@ -25,11 +32,5 @@ class HttpRequest
 
   def post
     Net::HTTP.post_form(@uri, @parameters)
-  end
-
-  def parse_parameters_to_hash(parameters_string)
-    parameters_string.split(',')
-                     .map { |key_value_pair| key_value_pair.split('=').map(&:strip) }
-                     .to_h
   end
 end
