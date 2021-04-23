@@ -30,7 +30,7 @@ describe 'HttpClient' do
   end
 
   describe '#send_requests_concurrently_in_loops' do
-    subject(:http_client) {
+    let(:http_client) {
       HttpClient.new(URL, 'get', QUERY_STRING, NUMBER_OF_THREADS, NUMBER_OF_LOOPS, 'response-bodies') 
     }
     before { http_client.send(:send_requests_concurrently_in_loops) }
@@ -42,7 +42,7 @@ describe 'HttpClient' do
 
   describe '#display' do
     context 'when output_type is response-codes-aggregation' do
-      subject(:http_client) { 
+      let(:http_client) { 
         HttpClient
           .new(URL, 'get', QUERY_STRING, NUMBER_OF_THREADS, NUMBER_OF_LOOPS, 'response-codes-aggregation') 
       }
@@ -54,7 +54,7 @@ describe 'HttpClient' do
     end
     
     context 'when output_type is response-bodies' do
-      subject(:http_client) { 
+      let(:http_client) { 
         HttpClient
           .new(URL, 'get', QUERY_STRING, NUMBER_OF_THREADS, NUMBER_OF_LOOPS, 'response-bodies') 
       }
@@ -77,7 +77,7 @@ describe 'HttpClient' do
   end
 
   describe '#aggregate_response_codes' do
-    subject(:http_client) { 
+    let(:http_client) { 
       HttpClient
         .new(URL, 'get', QUERY_STRING, NUMBER_OF_THREADS, NUMBER_OF_LOOPS, 'response-codes-aggregation') 
     }

@@ -17,6 +17,8 @@ class HttpClient
     display
   end
 
+  private
+
   def display
     case @output_type
     when 'response-codes-aggregation'
@@ -27,8 +29,6 @@ class HttpClient
       raise UnsupportedOutputTypeError
     end
   end
-
-  private
 
   def send_requests_concurrently_in_loops
     @number_of_loops.times do
