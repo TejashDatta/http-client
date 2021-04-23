@@ -19,17 +19,6 @@ class HttpClient
 
   private
 
-  def display
-    case @output_type
-    when 'response-codes-aggregation'
-      aggregate_response_codes.each { |response_code, count| puts "#{response_code}: #{count}" }
-    when 'response-bodies'
-      @responses.each { |response| puts response.body }
-    else
-      raise UnsupportedOutputTypeError
-    end
-  end
-
   def send_requests_concurrently_in_loops
     @number_of_loops.times do
       threads = []
@@ -39,6 +28,17 @@ class HttpClient
         end
       end
       threads.each(&:join)
+    end
+  end
+
+  def display
+    case @output_type
+    when 'response-codes-aggregation'
+      aggregate_response_codes.each { |response_code, count| puts "#{response_code}: #{count}" }
+    when 'response-bodies'
+      @responses.each { |response| puts response.body }
+    else
+      raise UnsupportedOutputTypeError
     end
   end
 
