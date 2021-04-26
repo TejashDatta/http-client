@@ -6,6 +6,7 @@ describe 'HttpRequest' do
   let(:http_request_get_with_query) { HttpRequest.new(URL, 'get', QUERY_STRING) }
   let(:http_request_post) { HttpRequest.new(URL, 'post', '') }
   let(:http_request_post_with_query) { HttpRequest.new(URL, 'post', QUERY_STRING) }
+  let(:http_request_put) { HttpRequest.new(URL, 'put', '') }
 
   describe '#send_request' do
     context 'when get request without query parameters' do
@@ -34,9 +35,7 @@ describe 'HttpRequest' do
 
     context 'when unsupported request' do
       it 'raises UnsupportedHttpMethodError' do
-        expect { HttpRequest.new(URL, 'put', '').send_request }.to raise_error(
-          UnsupportedHttpMethodError
-        )
+        expect { http_request_put.send_request }.to raise_error(UnsupportedHttpMethodError)
       end
     end
   end
