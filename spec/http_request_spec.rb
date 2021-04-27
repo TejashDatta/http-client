@@ -1,10 +1,12 @@
 require_relative '../http_request'
 require_relative 'constants'
 
-PARAMETERS = { 'p' => 1, 'z' => 'abc' }.freeze
+PARAMETERS_STRING = '{ p => 1, z=>abc }'.freeze
 
 describe 'HttpRequest' do
-  let(:http_request) { HttpRequest.new(URL, '', '') }
+  let(:http_request) { HttpRequest.new(URL, http_method, parameters_string) }
+  let(:http_method) { '' }
+  let(:parameters_string) { '' }
 
   shared_examples 'a correct request' do
     it 'has response with status code 200' do
@@ -20,35 +22,35 @@ describe 'HttpRequest' do
 
   describe '#send_request' do
     context 'when get request' do
-      before { http_request.instance_variable_set(:@method, 'get') }
+      let(:http_method) { 'get' }
 
       context 'without query parameters' do
         it_behaves_like 'a correct request'
       end
 
       context 'with query parameters' do
-        before { http_request.instance_variable_set(:@parameters, PARAMETERS) }
+        let(:parameters_string) { PARAMETERS_STRING }
 
         it_behaves_like 'a correct request'
       end
     end
 
     context 'when post request' do
-      before { http_request.instance_variable_set(:@method, 'post') }
+      let(:http_method) { 'post' }
 
       context 'without query parameters' do
         it_behaves_like 'a correct request'
       end
 
       context 'with query parameters' do
-        before { http_request.instance_variable_set(:@parameters, PARAMETERS) }
+        let(:parameters_string) { PARAMETERS_STRING }
 
         it_behaves_like 'a correct request'
       end
     end
 
     context 'when unsupported request' do
-      before { http_request.instance_variable_set(:@method, 'put') }
+      let(:http_method) { 'put' }
 
       it 'raises UnsupportedHttpMethodError' do
         expect { http_request.send_request }.to raise_error(UnsupportedHttpMethodError)
@@ -70,7 +72,7 @@ describe 'HttpRequest' do
     end
 
     context 'when with query parameters' do
-      before { http_request.instance_variable_set(:@parameters, PARAMETERS) }
+      let(:parameters_string) { PARAMETERS_STRING }
 
       it_behaves_like 'a correct http method call', :get
     end
@@ -82,7 +84,7 @@ describe 'HttpRequest' do
     end
 
     context 'when with query parameters' do
-      before { http_request.instance_variable_set(:@parameters, PARAMETERS) }
+      let(:parameters_string) { PARAMETERS_STRING }
 
       it_behaves_like 'a correct http method call', :post
     end

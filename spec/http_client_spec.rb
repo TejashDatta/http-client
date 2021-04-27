@@ -9,15 +9,13 @@ output_count = NUMBER_OF_THREADS * NUMBER_OF_LOOPS
 
 describe 'HttpClient' do
   let(:http_client) {
-    HttpClient.new(URL, '', QUERY_STRING, NUMBER_OF_THREADS, NUMBER_OF_LOOPS, '')
+    HttpClient.new(URL, http_method, QUERY_STRING, NUMBER_OF_THREADS, NUMBER_OF_LOOPS, output_type)
   }
 
   describe '#run' do
     context 'when method is get and output_type is response-bodies' do
-      before do 
-        http_client.instance_variable_set(:@method, 'get')
-        http_client.instance_variable_set(:@output_type, 'response-bodies')
-      end
+      let(:http_method) { 'get' }
+      let(:output_type) { 'response-bodies' }
 
       it 'displays all response-bodies' do
         expect { http_client.run }.to output(HTML_RESPONSE_BODY * output_count).to_stdout
@@ -25,10 +23,8 @@ describe 'HttpClient' do
     end
 
     context 'when method is post and output_type is response-codes-aggregation' do
-      before do
-        http_client.instance_variable_set(:@method, 'post')
-        http_client.instance_variable_set(:@output_type, 'response-codes-aggregation')
-      end
+      let(:http_method) { 'post' }
+      let(:output_type) { 'response-codes-aggregation' }
 
       it 'displays response codes aggregation for all codes 200' do
         expect { http_client.run }.to output("200: #{output_count}\n").to_stdout
@@ -37,10 +33,10 @@ describe 'HttpClient' do
   end
 
   shared_context 'http_client has received get responses' do
-    before do
-      http_client.instance_variable_set(:@method, 'get')
-      http_client.send(:send_requests_concurrently_in_loops)
-    end
+    let(:http_method) { 'get' }
+    let(:output_type) { '' }
+
+    before { http_client.send(:send_requests_concurrently_in_loops) }
   end
 
   describe '#send_requests_concurrently_in_loops' do
@@ -55,7 +51,7 @@ describe 'HttpClient' do
     include_context 'http_client has received get responses'
 
     context 'when output_type is response-codes-aggregation' do
-      before { http_client.instance_variable_set(:@output_type, 'response-codes-aggregation') }
+      let(:output_type) { 'response-codes-aggregation' }
 
       it 'displays response code aggregation for all codes 200' do
         expect { http_client.send(:display) }.to output("200: #{output_count}\n").to_stdout
@@ -63,7 +59,7 @@ describe 'HttpClient' do
     end
     
     context 'when output_type is response-bodies' do
-      before { http_client.instance_variable_set(:@output_type, 'response-bodies') }
+      let(:output_type) { 'response-bodies' }
 
       it 'displays response bodies' do
         expect { http_client.send(:display) }.to output(HTML_RESPONSE_BODY * output_count).to_stdout
@@ -71,7 +67,7 @@ describe 'HttpClient' do
     end
 
     context 'when output_type is other' do
-      before { http_client.instance_variable_set(:@output_type, 'other') }
+      let(:output_type) { 'other' }
       
       it 'raises UnsupportedOutputTypeError' do
         expect { http_client.send(:display) }.to raise_error(UnsupportedOutputTypeError)
