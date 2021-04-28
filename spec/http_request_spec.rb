@@ -61,7 +61,7 @@ describe 'HttpRequest' do
   end
 
   describe '#parse_parameters_to_hash' do
-    let(:http_method) { 'put' }
+    let(:http_method) { 'get' }
     let(:parameters_string) { test_parameters_string }
 
     it 'parses correctly' do
