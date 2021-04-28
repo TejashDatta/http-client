@@ -34,18 +34,26 @@ class HttpClient
   def display
     case @output_type
     when 'response-codes-aggregation'
-      aggregate_response_codes.each { |response_code, count| puts "#{response_code}: #{count}" }
+      display_response_codes_aggregation
     when 'response-bodies'
-      @responses.each { |response| puts response.body }
+      display_response_bodies
     else
       raise UnsupportedOutputTypeError
     end
+  end
+
+  def display_response_codes_aggregation
+    aggregate_response_codes.each { |response_code, count| puts "#{response_code}: #{count}" }
   end
 
   def aggregate_response_codes
     @responses.each_with_object(Hash.new(0)) do |response, response_codes|
       response_codes[response.code] += 1
     end
+  end
+
+  def display_response_bodies
+    @responses.each { |response| puts response.body }
   end
 end
 
