@@ -9,7 +9,7 @@ class HttpRequest
   end
 
   def send_request
-    Timeout.timeout(0.1) do
+    Timeout.timeout(1) do
       case @method
       when 'get' then get
       when 'post' then post
