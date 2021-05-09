@@ -1,0 +1,2 @@
+class UnsupportedHttpMethodError < StandardError
+end
