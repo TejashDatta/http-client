@@ -9,15 +9,11 @@ class HttpRequest
   end
 
   def send_request
-    Timeout.timeout(1) do
-      case @method
-      when 'get' then get
-      when 'post' then post
-      else raise UnsupportedHttpMethodError
-      end
+    case @method
+    when 'get' then get
+    when 'post' then post
+    else raise UnsupportedHttpMethodError
     end
-  rescue Timeout::Error
-    Net::HTTPRequestTimeOut.new(1.0, 408, 'Request Timeout')
   end
 
   private
