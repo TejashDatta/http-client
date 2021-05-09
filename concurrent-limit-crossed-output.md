@@ -1,33 +1,46 @@
-# apache server settings 1:
+Number of server threads: 2
 
-StartServers			 1
-MinSpareThreads		 1
-MaxSpareThreads		 1
-ThreadLimit			 1
-ThreadsPerChild		 1
-MaxRequestWorkers	  1
-MaxConnectionsPerChild   1
+command run: 
+ruby http_client.rb http://127.0.1.1 get 'q=none' [NUMBER_OF_THREADS] 10 response-codes-aggregation
 
-## command run:
-ruby http_client.rb http://127.0.1.1 post 'q=none' 3 4 response-codes-aggregation
+# case 1
+Number of threads: 2
 
-## output:
-200: 2
-408: 10
+output: 
+200: 20
 
-# apache server settings 2:
+# case 2
+Number of threads: 10
 
-StartServers			 1
-MinSpareThreads		 5
-MaxSpareThreads		 5
-ThreadLimit			 5
-ThreadsPerChild		 5
-MaxRequestWorkers	  5
-MaxConnectionsPerChild   5
+output: 
+200: 100
 
-## command run:
-ruby http_client.rb http://127.0.1.1 get 'q=none' 10 10 response-codes-aggregation
+# case 3
+Number of threads: 50
 
-## output:
-200: 5
-408: 95
+output: 
+200: 500
+
+# case 4
+Number of threads: 100
+
+output: 
+200: 1000
+
+# case 5
+Number of threads: 500
+
+output: 
+200: 5000
+
+# case 6
+Number of threads: 1000
+
+output: 
+200: 10000
+
+# case 7
+Number of threads: 5000
+
+output (error): 
+execution expired (Net::OpenTimeout)
