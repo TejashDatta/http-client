@@ -44,3 +44,23 @@ Number of threads: 5000
 
 output (error): 
 execution expired (Net::OpenTimeout)
+
+# case 8
+Number of threads: 2000
+
+output (error): 
+Connection reset by peer (Errno::ECONNRESET)
+
+# case 9
+Number of threads: 1500
+
+output: 
+200: 15000
+
+# case 10
+Number of threads: 1700
+
+output (error): 
+Connection reset by peer (Errno::ECONNRESET)
+
+よって、サーバーが通常対応できる並行処理リクエストは1500-1700の間です。
