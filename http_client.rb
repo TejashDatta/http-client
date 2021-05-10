@@ -24,7 +24,10 @@ class HttpClient
       threads = []
       @number_of_threads.times do
         threads << Thread.new do
-          @responses << HttpRequest.new(@url, @method, @parameters).send_request
+          begin
+            @responses << HttpRequest.new(@url, @method, @parameters).send_request
+          rescue Net::OpenTimeout, Errno::ECONNRESET
+          end
         end
       end
       threads.each(&:join)
