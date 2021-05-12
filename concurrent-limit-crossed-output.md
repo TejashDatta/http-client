@@ -1,33 +1,58 @@
-# apache server settings 1:
+command run: 
+ruby http_client.rb http://127.0.1.1 get 'q=none' [NUMBER_OF_THREADS] 1 response-codes-aggregation
 
-StartServers			 1
-MinSpareThreads		 1
-MaxSpareThreads		 1
-ThreadLimit			 1
-ThreadsPerChild		 1
-MaxRequestWorkers	  1
-MaxConnectionsPerChild   1
+# case 1
+Number of threads: 5000
 
-## command run:
-ruby http_client.rb http://127.0.1.1 post 'q=none' 3 4 response-codes-aggregation
+output: 
+200: 3114
 
-## output:
-200: 2
-408: 10
+# case 2
+Number of threads: 3000
 
-# apache server settings 2:
+output: 
+200: 3000
 
-StartServers			 1
-MinSpareThreads		 5
-MaxSpareThreads		 5
-ThreadLimit			 5
-ThreadsPerChild		 5
-MaxRequestWorkers	  5
-MaxConnectionsPerChild   5
+# case 3
+Number of threads: 3500
 
-## command run:
-ruby http_client.rb http://127.0.1.1 get 'q=none' 10 10 response-codes-aggregation
+output: 
+200: 3500
 
-## output:
-200: 5
-408: 95
+# case 4
+Number of threads: 4000
+
+output: 
+200: 4000
+
+# case 5
+Number of threads: 4500
+
+output: 
+200: 4500
+
+# case 6
+Number of threads: 4800
+
+output: 
+200: 1824
+
+# case 7
+Number of threads: 4650
+
+output: 
+200: 4650
+
+# case 8
+Number of threads: 4750
+
+output: 
+200: 2659
+
+# case 9
+Number of threads: 4700
+
+output: 
+200: 3004
+
+正常にレスポンスを受け取ることができる並行処理数の限界値は4650-4700間です。
